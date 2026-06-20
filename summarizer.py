@@ -1,11 +1,25 @@
 import anthropic
 import os
 
-client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
+_client = None
+
+
+def _get_client() -> anthropic.Anthropic:
+    global _client
+    if _client is None:
+        api_key = os.environ.get("ANTHROPIC_API_KEY")
+        if not api_key:
+            raise RuntimeError(
+                "ANTHROPIC_API_KEY is not set. Check Railway's Variables tab "
+                "(or your local .env file) and redeploy."
+            )
+        _client = anthropic.Anthropic(api_key=api_key)
+    return _client
 
 
 def summarize_all_news(stocks_data: dict[str, list[dict]]) -> str:
     """Summarize news for all tracked stocks in a single Claude API call."""
+    client = _get_client()
 
     sections = []
     for ticker, articles in stocks_data.items():
@@ -45,7 +59,7 @@ News data:
 {combined_input}"""
 
     response = client.messages.create(
-        model="claude-sonnet-4-20250514",
+        model=os.environ.get("CLAUDE_MODEL", "claude-sonnet-4-6"),
         max_tokens=2000,
         messages=[{"role": "user", "content": prompt}],
     )
