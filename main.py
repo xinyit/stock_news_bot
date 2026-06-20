@@ -2,25 +2,24 @@ import asyncio
 import os
 import logging
 from datetime import datetime
+from dotenv import load_dotenv
+
+load_dotenv()  # must run before importing modules that read os.environ at import time
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 from telegram import Bot
 from telegram.constants import ParseMode
-from dotenv import load_dotenv
 
 from config import STOCKS, DIGEST_HOUR, DIGEST_MINUTE, TIMEZONE
 from news_fetcher import fetch_stock_news
 from summarizer import summarize_all_news
-
-load_dotenv()
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 log = logging.getLogger(__name__)
 
 BOT_TOKEN = os.environ["TELEGRAM_BOT_TOKEN"]
 CHANNEL_ID = os.environ["TELEGRAM_CHANNEL_ID"]
-
 
 def split_for_telegram(text: str, limit: int = 4000) -> list[str]:
     """Split text into Telegram-safe chunks, breaking on section dividers."""
