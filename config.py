@@ -1,5 +1,7 @@
 # Tickers to track
-STOCKS = ["AAPL", "LLY", "GOOGL", "TMO", "S63.SI", "BNTX"]
+import os
+
+STOCKS = os.environ.get("STOCKS", "AAPL,GOOGL,AMZN,MSFT,TSLA").split(",")
 
 # How many articles to fetch per stock
 MAX_ARTICLES_PER_STOCK = 4

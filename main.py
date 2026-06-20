@@ -52,7 +52,7 @@ async def send_digest():
     log.info("Generating combined summary (1 API call)...")
     digest_body = summarize_all_news(stocks_data)
 
-    full_message = f"🌅 *Good morning! Stock Digest — {today}*\n\n{digest_body}"
+    full_message = f"🌅 *Good morning! Today's Stock Bites [{today}*\n\n{digest_body}]"
 
     for chunk in split_for_telegram(full_message):
         try:
